@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SportStream - Live Sports Streaming</title>
+    <style>
+        * {
+            margin: 100;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #fff;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #00d4ff;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #00d4ff;
+        }
+
+        /* Main Content */
+        main {
+            margin-top: 80px;
+            padding: 2rem 0;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 3rem 0;
+            background: rgba(0, 0, 0, 0.3);
+            margin-bottom: 3rem;
+            border-radius: 15px;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #00d4ff, #ffffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* Live Matches */
+        .live-section {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: #00d4ff;
+            border-bottom: 2px solid #00d4ff;
+            padding-bottom: 0.5rem;
+        }
+
+        .live-match {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 2px solid #00d4ff;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .match-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .live-badge {
+            background: #ff0000;
+            color: #fff;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .match-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .team {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .team-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .team-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .score {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #00d4ff;
+        }
+
+        .vs {
+            font-size: 1.5rem;
+            color: #ccc;
+        }
+
+        .watch-btn {
+            background: linear-gradient(45deg, #00d4ff, #0099cc);
+            color: #fff;
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .watch-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.4);
+        }
+
+        /* Upcoming Matches */
+        .upcoming-matches {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .match-card {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 15px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .match-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 212, 255, 0.2);
+        }
+
+        .match-time {
+            color: #00d4ff;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .match-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .small-team {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .small-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .league-badge {
+            background: rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 2rem 0;
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section h3 {
+            color: #00d4ff;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section ul li a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-section ul li a:hover {
+            color: #00d4ff;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .match-details {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .team {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .score {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">⚽ SportStream</div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#live">Live</a></li>
+                <li><a href="#upcoming">Schedule</a></li>
+                <li><a href="#leagues">Leagues</a></li>
+                <li><a href="#highlights">Highlights</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <h1>Live Sports Streaming</h1>
+            <p>Enjoy the best football matches from around the world in HD quality</p>
+        </section>
+
+        <section id="live" class="live-section">
+            <h2 class="section-title">🔴 Live Now</h2>
+            
+            <div class="live-match">
+                <div class="match-header">
+                    <div class="live-badge">● LIVE</div>
+                    <div class="match-time">75' - Second Half</div>
+                </div>
+                <div class="match-details">
+                    <div class="team">
+                        <div class="team-logo">
+                            <img src="realmadrid.png" alt="Real Madrid" style="width: 100%; height: 100%; object-fit: contain;">
+                        </div>
+                        <div>
+                            <div class="team-name">Real Madrid</div>
+                            <div style="font-size: 0.9rem; color: #ccc;">ESP</div>
+                        </div>
+                    </div>
+                    <div class="score">2 - 1</div>
+                    <div class="team">
+                        <div>
+                            <div class="team-name">Barcelona</div>
+                            <div style="font-size: 0.9rem; color: #ccc;">ESP</div>
+                        </div>
+                        <div class="team-logo">
+                            <img src="barcelona.png" alt="Barcelona" style="width: 100%; height: 100%; object-fit: contain;">
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align: center;">
+                    <a href="#" class="watch-btn">🎥 Watch Now</a>
+                </div>
+            </div>
+
+            <div class="live-match">
+                <div class="match-header">
+                    <div class="live-badge">● LIVE</div>
+                    <div class="match-time">42' - First Half</div>
+                </div>
+                <div class="match-details">
+                    <div class="team">
+                        <div class="team-logo">
+                            <img src="manutd.png" alt="Manchester United" style="width: 100%; height: 100%; object-fit: contain;">
+                        </div>
+                        <div>
+                            <div class="team-name">Manchester United</div>
+                            <div style="font-size: 0.9rem; color: #ccc;">ENG</div>
+                        </div>
+                    </div>
+                    <div class="score">0 - 0</div>
+                    <div class="team">
+                        <div>
+                            <div class="team-name">Liverpool</div>
+                            <div style="font-size: 0.9rem; color: #ccc;">ENG</div>
+                        </div>
+                        <div class="team-logo">
+                            <img src="liverpool.png" alt="Liverpool" style="width: 100%; height: 100%; object-fit: contain;">
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align: center;">
+                    <a href="#" class="watch-btn">🎥 Watch Now</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="upcoming">
+            <h2 class="section-title">📅 Upcoming Matches</h2>
+            
+            <div class="upcoming-matches">
+                <div class="match-card">
+                    <div class="match-time">⏰ Today, 9:00 PM</div>
+                    <div class="match-info">
+                        <div class="small-team">
+                            <div class="small-logo">
+                                <img src="chealsea.png" alt="Chelsea" style="width: 100%; height: 100%; object-fit: contain;">
+                            </div>
+                            <span>Chelsea</span>
+                        </div>
+                        <div class="vs">VS</div>
+                        <div class="small-team">
+                            <span>Arsenal</span>
+                            <div class="small-logo">
+                                <img src="arsenal.png" alt="Arsenal" style="width: 100%; height: 100%; object-fit: contain;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="league-badge">Premier League</div>
+                </div>
+
+                <div class="match-card">
+                    <div class="match-time">⏰ Tomorrow, 2:00 AM</div>
+                    <div class="match-info">
+                        <div class="small-team">
+                            <div class="small-logo">
+                                <img src="juventus.png" alt="Juventus" style="width: 100%; height: 100%; object-fit: contain;">
+                            </div>
+                            <span>Juventus</span>
+                        </div>
+                        <div class="vs">VS</div>
+                        <div class="small-team">
+                            <span>AC Milan</span>
+                            <div class="small-logo">
+                                <img src="acmilan.jpg" alt="AC Milan" style="width: 100%; height: 100%; object-fit: contain;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="league-badge">Serie A</div>
+                </div>
+
+                <div class="match-card">
+                    <div class="match-time">⏰ Tomorrow, 7:30 PM</div>
+                    <div class="match-info">
+                        <div class="small-team">
+                            <div class="small-logo">
+                                <img src="bayern.png" alt="Bayern Munich" style="width: 100%; height: 100%; object-fit: contain;">
+                            </div>
+                            <span>Bayern Munich</span>
+                        </div>
+                        <div class="vs">VS</div>
+                        <div class="small-team">
+                            <span>Borussia Dortmund</span>
+                            <div class="small-logo">
+                                <img src="dortmund.png" alt="Borussia Dortmund" style="width: 100%; height: 100%; object-fit: contain;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="league-badge">Bundesliga</div>
+                </div>
+
+                <div class="match-card">
+                    <div class="match-time">⏰ Sunday, 8:00 PM</div>
+                    <div class="match-info">
+                        <div class="small-team">
+                            <div class="small-logo">
+                                <img src="psg.jpg" alt="PSG" style="width: 100%; height: 100%; object-fit: contain;">
+                            </div>
+                            <span>Paris Saint-Germain</span>
+                        </div>
+                        <div class="vs">VS</div>
+                        <div class="small-team">
+                            <span>Olympique Marseille</span>
+                            <div class="small-logo">
+                                <img src="olympique.png" alt="Marseille" style="width: 100%; height: 100%; object-fit: contain;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="league-badge">Ligue 1</div>
+                </div>
+
+                <div class="match-card">
+                    <div class="match-time">⏰ Monday, 1:30 AM</div>
+                    <div class="match-info">
+                        <div class="small-team">
+                            <div class="small-logo">
+                                <img src="atletico.jpg" alt="Atletico Madrid" style="width: 100%; height: 100%; object-fit: contain;">
+                            </div>
+                            <span>Atletico Madrid</span>
+                        </div>
+                        <div class="vs">VS</div>
+                        <div class="small-team">
+                            <span>Sevilla</span>
+                            <div class="small-logo">
+                                <img src="sevilla.png" alt="Sevilla" style="width: 100%; height: 100%; object-fit: contain;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="league-badge">La Liga</div>
+                </div>
+
+                <div class="match-card">
+                    <div class="match-time">⏰ Tuesday, 2:45 AM</div>
+                    <div class="match-info">
+                        <div class="small-team">
+                            <div class="small-logo">
+                                <img src="city.png" alt="Manchester City" style="width: 100%; height: 100%; object-fit: contain;">
+                            </div>
+                            <span>Manchester City</span>
+                        </div>
+                        <div class="vs">VS</div>
+                        <div class="small-team">
+                            <span>Tottenham</span>
+                            <div class="small-logo">
+                                <img src="tottenham.png" alt="Tottenham" style="width: 100%; height: 100%; object-fit: contain;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="league-badge">Premier League</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="leagues" style="margin-bottom: 3rem;">
+            <h2 class="section-title">🏆 Popular Leagues</h2>
+            
+            <div class="upcoming-matches">
+                <div class="match-card" style="text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🏴󠁧󠁢󠁥󠁮󠁧󠁿</div>
+                    <h3>Premier League</h3>
+                    <p style="color: #ccc; margin: 0.5rem 0;">English League</p>
+                    <div class="league-badge">20 Teams</div>
+                </div>
+
+                <div class="match-card" style="text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🇪🇸</div>
+                    <h3>La Liga</h3>
+                    <p style="color: #ccc; margin: 0.5rem 0;">Spanish League</p>
+                    <div class="league-badge">20 Teams</div>
+                </div>
+
+                <div class="match-card" style="text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🇩🇪</div>
+                    <h3>Bundesliga</h3>
+                    <p style="color: #ccc; margin: 0.5rem 0;">German League</p>
+                    <div class="league-badge">18 Teams</div>
+                </div>
+
+                <div class="match-card" style="text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🇮🇹</div>
+                    <h3>Serie A</h3>
+                    <p style="color: #ccc; margin: 0.5rem 0;">Italian League</p>
+                    <div class="league-badge">20 Teams</div>
+                </div>
+
+                <div class="match-card" style="text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🇫🇷</div>
+                    <h3>Ligue 1</h3>
+                    <p style="color: #ccc; margin: 0.5rem 0;">French League</p>
+                    <div class="league-badge">20 Teams</div>
+                </div>
+
+                <div class="match-card" style="text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🏆</div>
+                    <h3>Champions League</h3>
+                    <p style="color: #ccc; margin: 0.5rem 0;">UEFA Champions League</p>
+                    <div class="league-badge">32 Teams</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Services</h3>
+                    <ul>
+                        <li><a href="#">Live Streaming</a></li>
+                        <li><a href="#">Highlights</a></li>
+                        <li><a href="#">Statistics</a></li>
+                        <li><a href="#">Schedule</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Leagues</h3>
+                    <ul>
+                        <li><a href="#">Premier League</a></li>
+                        <li><a href="#">La Liga</a></li>
+                        <li><a href="#">Serie A</a></li>
+                        <li><a href="#">Bundesliga</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Support</h3>
+                    <ul>
+                        <li><a href="#">Help</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Report</a></li>
+                    </ul>
+                </div>
+            </div>
+            <p>&copy; 2025 SportStream. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Update live match time
+        function updateLiveTime() {
+            const liveMatches = document.querySelectorAll('.live-match');
+            liveMatches.forEach(match => {
+                const timeElement = match.querySelector('.match-time');
+                if (timeElement && timeElement.textContent.includes("'")) {
+                    const currentTime = parseInt(timeElement.textContent.match(/\d+/)[0]);
+                    if (currentTime < 90) {
+                        timeElement.textContent = `${currentTime + 1}' - ${currentTime < 45 ? 'First Half' : 'Second Half'}`;
+                    }
+                }
+            });
+        }
+
+        // Update time every minute
+        setInterval(updateLiveTime, 60000);
+
+        // Add interactive effects
+        document.querySelectorAll('.watch-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                this.textContent = '⏳ Loading...';
+                setTimeout(() => {
+                    this.textContent = '🎥 Watch Now';
+                }, 2000);
+            });
+        });
+
+        // Add hover effects to match cards
+        document.querySelectorAll('.match-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>
