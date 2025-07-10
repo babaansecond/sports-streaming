@@ -657,9 +657,11 @@
         document.querySelectorAll('.watch-btn').forEach(btn => {
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
+		    const url = this.href;
                 this.textContent = '⏳ Loading...';
                 setTimeout(() => {
                     this.textContent = '🎥 Watch Now';
+			window.location.href = url;
                 }, 2000);
             });
         });
